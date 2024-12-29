@@ -1,4 +1,6 @@
 from mainFunctions import extract_keywords, match_keywords, detect_keyword_stuffing
+from saveResumes import save_resume_pickle, load_resume_pickle, save_slot_selection
+from tkinter import filedialog
 import customtkinter as ctk
 
 # Set up the appearance (optional)
@@ -9,6 +11,23 @@ ctk.set_default_color_theme("blue")
 root = ctk.CTk()
 root.geometry("750x1080")
 root.title("Resume Keyword Analyzer")
+
+# Define the function to handle shortcuts
+def handle_shortcuts(event):
+    textbox = event.widget # get widget that triggered the event
+    if isinstance(textbox, ctk.CTkTextbox):
+        if event.keysym == "a" and event.state & 0x4:  # Ctrl+A
+            textbox.tag_add("sel", "1.0", "end")  # Select all text
+            return "break"
+        elif event.keysym == "c" and event.state & 0x4:  # Ctrl+C
+            if textbox.tag_ranges("sel"):  # Check if text is selected
+                root.clipboard_clear()
+                root.clipboard_append(textbox.get("sel.first", "sel.last"))
+            return "break"
+        elif event.keysym == "v" and event.state & 0x4:  # Ctrl+V
+            textbox.insert("insert", root.clipboard_get())
+            return "break"  
+
 
 # Create a label for the job description
 job_label = ctk.CTkLabel(root, text="Input the Job Description Below:")
@@ -28,9 +47,14 @@ resume_textbox = ctk.CTkTextbox(root, height=300, width=500)
 resume_textbox.insert("0.0", "Resume Here...")
 resume_textbox.pack(pady=10, padx=20)
 
-
 # Initialize a textbox reference before it is initially made
 results_textbox = None
+
+# Bind the shortcuts to both textboxes
+for textbox in [jobDescription_textbox, resume_textbox]:
+    textbox.bind("<Control-a>", handle_shortcuts)
+    textbox.bind("<Control-c>", handle_shortcuts)
+    textbox.bind("<Control-v>", handle_shortcuts)
 
 # Define a function to get input from the textbox
 def on_submit():
@@ -66,7 +90,7 @@ def on_submit():
     # if there is an error let user know program usage
     if error_message:
         # Dynamically create a new textbox
-        new_results_textbox = ctk.CTkTextbox(root, height=200, width=300)
+        new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
         new_results_textbox.insert("0.0", error_message)
         new_results_textbox.pack(pady=10, padx=20)
         results_textbox = new_results_textbox
@@ -80,19 +104,17 @@ def on_submit():
         matched_keywords = match_keywords(resume_text,job_keywords)
         keyword_percentage = matched_keywords[1]
         matched_keywords = matched_keywords[0]
-        
-        #print(match_keywords(resume_text,job_keywords))
 
         # Detect if there is any possibe keyword stuffing in the resume
         print(detect_keyword_stuffing(resume_text, job_keywords))
-        
+     
         # If there are no keywords between the resume and the job description
         if not matched_keywords:
             matched_keywords = "There are no matched keywords."
 
         else:
             keywords = (', ').join(set(matched_keywords))
-            matched_keywords = "The matched keywords are: \n" + keywords + " The keyword percentage match is: " + str(keyword_percentage) + "%"
+            matched_keywords = "The matched keywords are: " + keywords + "\nThe keyword percentage match is: " + str(keyword_percentage) + "%"
 
         # if keyword ratio of keywords in job description are high 
         if keyword_percentage > 70:
@@ -122,23 +144,58 @@ def on_submit():
 
         if stuffed_keywords:
             # Dynamically create a new textbox
-            new_results_textbox = ctk.CTkTextbox(root, height=200, width=300)
-            new_results_textbox.insert("0.0", matched_keywords + "/n" + f"The following words might be overused in your resume. {stuffed_keywords}. Make sure to check to see if enough context is given for these keywords.")
+            new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
+            new_results_textbox.insert("0.0", matched_keywords + "\n" + f"The following words might be overused in your resume. {stuffed_keywords}. Make sure to check to see if enough context is given for these keywords.\n" + s)
             new_results_textbox.pack(pady=10, padx=20)
             results_textbox = new_results_textbox
         
         else:
             # Dynamically create a new textbox
-            new_results_textbox = ctk.CTkTextbox(root, height=200, width=300)
-            new_results_textbox.insert("0.0", matched_keywords + "/n")
+            new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
+            new_results_textbox.insert("0.0", matched_keywords + "\n" + s)
             new_results_textbox.pack(pady=10, padx=20)
             results_textbox = new_results_textbox
-
 
 
 # Add a button to trigger the action
 submit_button = ctk.CTkButton(root, text="Submit", command=on_submit)
 submit_button.pack(pady=10)
+
+
+# Function to open the file dialog
+def select_file():
+    file_path = filedialog.askopenfilename(
+        title="Select a File",
+        filetypes=(("Text Files", "*.txt"), ("All Files", "*.*"))  # Specify allowed file types
+    )
+    if file_path:  # If a file is selected
+        print(f"Selected File: {file_path}")
+        label.configure(text=f"Selected: {file_path}")
+        save_slot_selection(file_path)
+
+
+# Create a button to trigger the file dialog
+file_button = ctk.CTkButton(root, text="Select a File", command=select_file)
+file_button.pack(pady=20)
+
+
+# Label to display the selected file
+label = ctk.CTkLabel(root, text="No file selected")
+label.pack(pady=10)
+
+
+
+# Callback function for when an option is selected
+def select_resume(choice):
+    print(f"Selected Resume: {choice}")
+
+    save_slot_selection(choice)
+
+
+# Dropdown menu with options
+resume_choices = ["Resume 1", "Resume 2", "Resume 3"]
+dropdown = ctk.CTkOptionMenu(root, values=resume_choices, command=select_resume)
+dropdown.pack(pady=20)
 
 # Run the main application loop
 root.mainloop()
