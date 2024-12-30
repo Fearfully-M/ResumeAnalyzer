@@ -1,13 +1,44 @@
-import tkinter as tk
+import customtkinter as ctk
 
-root = tk.Tk()
+# Initialize the main application window
+root = ctk.CTk()
+root.geometry("400x300")
 
-button1 = tk.Button(root, text="Button 1")
-button2 = tk.Button(root, text="Button 2")
-button3 = tk.Button(root, text="Button 3")
+# Create two frames to represent the two columns
+frame_left = ctk.CTkFrame(root)
+frame_right = ctk.CTkFrame(root)
 
-button1.grid(row=0, column=0)
-button2.grid(row=1, column=0)
-button3.grid(row=2, column=1)
+# Pack the frames side by side
+frame_left.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+frame_right.pack(side="right", fill="both", expand=True, padx=10, pady=10)
+
+# Create and pack buttons into the left frame
+button1 = ctk.CTkButton(frame_left, text="Button 1")
+button2 = ctk.CTkButton(frame_left, text="Button 2")
+button1.pack(pady=10, padx=10, fill="x")
+button2.pack(pady=10, padx=10, fill="x")
+
+# Create and pack buttons into the right frame
+button3 = ctk.CTkButton(frame_right, text="Button 3")
+button4 = ctk.CTkButton(frame_right, text="Button 4")
+button3.pack(pady=10, padx=10, fill="x")
+button4.pack(pady=10, padx=10, fill="x")
+
+
+
+# Create three frames
+frame_top = ctk.CTkFrame(root, height=200)
+frame_middle = ctk.CTkFrame(root, height=200)
+frame_bottom = ctk.CTkFrame(root, height=200)
+
+# Pack frames vertically
+frame_top.pack(fill="x", side="top", pady=5, padx=5)
+frame_middle.pack(fill="x", side="top", pady=5, padx=5)
+frame_bottom.pack(fill="x", side="top", pady=5, padx=5)
+
+# Add widgets (example: buttons)
+ctk.CTkButton(frame_top, text="Top Button").pack(pady=10)
+ctk.CTkButton(frame_middle, text="Middle Button").pack(pady=10)
+ctk.CTkButton(frame_bottom, text="Bottom Button").pack(pady=10)
 
 root.mainloop()

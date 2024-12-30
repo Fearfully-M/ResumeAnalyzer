@@ -13,6 +13,10 @@ root = ctk.CTk()
 root.geometry("750x1080")
 root.title("Resume Keyword Analyzer")
 
+# Blank column so that widgets start in the second (or middle) column on the screen
+root.grid_columnconfigure(0, weight=1)  # Blank column
+root.grid_columnconfigure(3, weight=1)  # Blank column
+
 
 # Define the function to handle shortcuts
 def handle_shortcuts(event):
@@ -33,21 +37,21 @@ def handle_shortcuts(event):
 
 # Create a label for the job description
 job_label = ctk.CTkLabel(root, text="Input the Job Description Below:")
-job_label.grid(row=0, column=1 , sticky = 'NSEW')
+job_label.grid(row=0, column=2 , sticky = 'NSEW')
 
 # Create the blank Textbox field with increased height to input job description
 jobDescription_textbox = ctk.CTkTextbox(root, height=300, width=500)
 jobDescription_textbox.insert("0.0", "Job Description Here...")
-jobDescription_textbox.grid(row=1, column=1 , sticky = 'NSEW')
+jobDescription_textbox.grid(row=1, column=2 , sticky = 'E')
 
 # Create a label for the resume
 resume_label = ctk.CTkLabel(root, text="Input the Resume Below:")
-resume_label.grid(row=2, column=1 , sticky = 'NSEW')
+resume_label.grid(row=2, column=2 , sticky = 'NSEW')
 
 # Create the blank Textbox to input resume
 resume_textbox = ctk.CTkTextbox(root, height=300, width=500)
 resume_textbox.insert("0.0", "Resume Here...")
-resume_textbox.grid(row=3, column=1 , sticky = 'NSEW')
+resume_textbox.grid(row=3, column=2 , sticky = 'E')
 
 # Initialize a textbox reference before it is initially made
 results_textbox = None
@@ -120,9 +124,8 @@ def on_submit():
 
         # if keyword ratio of keywords in job description are high 
         if keyword_percentage > 70:
-            s = f"""Your resume has a very high percentage of keywords (Keyword to word ratio: {keyword_percentage}%). This might suggest keyword stuffing and could be losing context.")
-                Use keywords more sparingly and with more context - for example:")
-                Instead of saying: 'Experienced in Python' give context such as: 'Developed a Python-based automation tool that improved efficiency by 30%'")
+            s = f"""Your resume has a very high percentage of keywords\n (Keyword to word ratio: {keyword_percentage}%). This might suggest keyword stuffing and could be losing context.")
+                Use keywords more sparingly and with more context - for example:") Instead of saying: 'Experienced in Python' give context such as: 'Developed a Python-based automation tool that improved efficiency by 30%'")
                 Most resumes that are considered have a keyword to word ratio of 50-70%"""
 
         # if keyword ratio is low 
@@ -161,7 +164,7 @@ def on_submit():
 
 # Add a button to trigger the action
 submit_button = ctk.CTkButton(root, text="Submit", command=on_submit)
-submit_button.grid(row=6, column=1, sticky = 'W')
+submit_button.grid(row=7, column=2, sticky = 'W')
 
 
 # Function to open the file dialog
@@ -190,12 +193,12 @@ def select_file():
 
 # Create a button to trigger the file dialog
 file_button = ctk.CTkButton(root, text="Select a File", command=select_file)
-file_button.grid(row=4, column=1)
+file_button.grid(row=7, column=2)
 
 
 # Label to display the selected file
 label = ctk.CTkLabel(root, text="No file selected")
-label.grid(row=5, column=1)
+label.grid(row=6, column=2)
 
 
 # Callback function for whe
@@ -209,10 +212,10 @@ def select_resume(choice, resume_textbox):
     current_directory = os.path.dirname(os.path.abspath(__file__))
     
     # now append the file name to the absolute path of the python script
-    file_path = os.path.join(current_directory , choice)
+    file_path = os.path.join(current_directory, choice)
 
     # read the resume file contents
-    resume_contents = read_text_file(choice)
+    resume_contents = load_resume_pickle(choice)
     resume_textbox.insert("0.0", resume_contents)
 
 
@@ -223,7 +226,11 @@ directory_path = '/home/fearfully_m/Desktop/ResumeAnalyzer/'
 resume_choices = [f for f in os.listdir(directory_path) 
          if os.path.isfile(os.path.join(directory_path, f)) and f.endswith('.pkl')]
 dropdown = ctk.CTkOptionMenu(root, values=resume_choices, command = lambda choice: select_resume(choice,resume_textbox))
-dropdown.grid(row=6, column=1 ,sticky = 'E')
+dropdown.grid(row=7, column=2 ,sticky = 'E')
+
+# Label to display the dropdown
+label_dropdown = ctk.CTkLabel(root, text="Saved Resumes")
+label_dropdown.grid(row=6, column=2, sticky= 'E')
 
 
 # Run the main application loop

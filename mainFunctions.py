@@ -34,26 +34,3 @@ def detect_keyword_stuffing(resume_text, job_keywords):
     excessive_repeats = {keyword: resume_text.lower().count(keyword.lower()) for keyword in job_keywords}
 
     return {keyword: count for keyword, count in excessive_repeats.items() if count > 5} 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# used only for automation later in project
-def get_job_description(method="user_input", source=None):
-    if method == "user_input":
-        return get_job_description_user_input()
-    elif method == "api":
-        return fetch_job_description_via_api(source)
-    elif method == "scraping":
-        return scrape_job_description(source)
-    else:
-        raise ValueError("Invalid method specified.")
