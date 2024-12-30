@@ -1,25 +1,13 @@
-import customtkinter as ctk
+import tkinter as tk
 
-# Initialize CustomTkinter
-ctk.set_appearance_mode("System")  # Can be "Dark", "Light" or "System"
-ctk.set_default_color_theme("blue")  # Themes: "blue", "dark-blue", "green"
+root = tk.Tk()
 
-# Create the main application window
-app = ctk.CTk()
-app.geometry("300x200")
-app.title("Resume Selector")
+button1 = tk.Button(root, text="Button 1")
+button2 = tk.Button(root, text="Button 2")
+button3 = tk.Button(root, text="Button 3")
 
-# Callback function for when an option is selected
-def select_resume(choice):
-    print(f"Selected Resume: {choice}")
+button1.grid(row=0, column=0)
+button2.grid(row=1, column=0)
+button3.grid(row=2, column=1)
 
-# Dropdown menu with options
-resume_choices = ["Resume 1", "Resume 2", "Resume 3"]
-dropdown = ctk.CTkOptionMenu(app, values=resume_choices, command=select_resume)
-dropdown.pack(pady=20)
-
-# Set a default value for the dropdown
-dropdown.set("Select a Resume")  # Placeholder text
-
-# Run the application
-app.mainloop()
+root.mainloop()

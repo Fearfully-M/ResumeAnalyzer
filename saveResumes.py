@@ -1,4 +1,5 @@
 import pickle
+import os
 
 # Save resume to a file
 def save_resume_pickle(file_path, resume_text):
@@ -21,17 +22,16 @@ print(load_resume_pickle(file_path))  # Output: This is a sample resume.
 # which save slot the user saves the resume to 1, 2, or 3
 def save_slot_selection(file_path):
     
-    #save_resume_pickle(file_path,)
+    resume_text = read_text_file(file_path)
+    save_resume_pickle(file_path, resume_text)
 
-    y = read_text_file(file_path)
-    print("This is y", y)
-    # x = load_resume_pickle(file_path)
+    #print("This is the loaded resume", loaded_resume)
+    return load_resume_pickle(file_path)
 
-    #print(x)
 
 def read_text_file(file_path):
     try:
-        with open(file_path, "r") as file:  # Open the file in read mode
+        with open(file_path, "rb") as file:  # Open the file in read mode
             content = file.read()  # Read the file's contents
             return content  # Print the file contents to the console
     except FileNotFoundError:

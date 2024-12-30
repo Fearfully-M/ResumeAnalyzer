@@ -1,7 +1,8 @@
 from mainFunctions import extract_keywords, match_keywords, detect_keyword_stuffing
-from saveResumes import save_resume_pickle, load_resume_pickle, save_slot_selection
+from saveResumes import save_resume_pickle, load_resume_pickle, save_slot_selection, read_text_file
 from tkinter import filedialog
 import customtkinter as ctk
+import os
 
 # Set up the appearance (optional)
 ctk.set_appearance_mode("System")
@@ -11,6 +12,7 @@ ctk.set_default_color_theme("blue")
 root = ctk.CTk()
 root.geometry("750x1080")
 root.title("Resume Keyword Analyzer")
+
 
 # Define the function to handle shortcuts
 def handle_shortcuts(event):
@@ -31,21 +33,21 @@ def handle_shortcuts(event):
 
 # Create a label for the job description
 job_label = ctk.CTkLabel(root, text="Input the Job Description Below:")
-job_label.pack(pady=10)
+job_label.grid(row=0, column=1 , sticky = 'NSEW')
 
 # Create the blank Textbox field with increased height to input job description
 jobDescription_textbox = ctk.CTkTextbox(root, height=300, width=500)
 jobDescription_textbox.insert("0.0", "Job Description Here...")
-jobDescription_textbox.pack(pady=10, padx=20)
+jobDescription_textbox.grid(row=1, column=1 , sticky = 'NSEW')
 
 # Create a label for the resume
 resume_label = ctk.CTkLabel(root, text="Input the Resume Below:")
-resume_label.pack(pady=10)
+resume_label.grid(row=2, column=1 , sticky = 'NSEW')
 
 # Create the blank Textbox to input resume
 resume_textbox = ctk.CTkTextbox(root, height=300, width=500)
 resume_textbox.insert("0.0", "Resume Here...")
-resume_textbox.pack(pady=10, padx=20)
+resume_textbox.grid(row=3, column=1 , sticky = 'NSEW')
 
 # Initialize a textbox reference before it is initially made
 results_textbox = None
@@ -92,7 +94,7 @@ def on_submit():
         # Dynamically create a new textbox
         new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
         new_results_textbox.insert("0.0", error_message)
-        new_results_textbox.pack(pady=10, padx=20)
+        new_results_textbox.grid(row=7, column=1)
         results_textbox = new_results_textbox
 
     # calculate the resume keywords
@@ -146,20 +148,20 @@ def on_submit():
             # Dynamically create a new textbox
             new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
             new_results_textbox.insert("0.0", matched_keywords + "\n" + f"The following words might be overused in your resume. {stuffed_keywords}. Make sure to check to see if enough context is given for these keywords.\n" + s)
-            new_results_textbox.pack(pady=10, padx=20)
+            new_results_textbox.grid(row=7, column=1)
             results_textbox = new_results_textbox
         
         else:
             # Dynamically create a new textbox
             new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
             new_results_textbox.insert("0.0", matched_keywords + "\n" + s)
-            new_results_textbox.pack(pady=10, padx=20)
+            new_results_textbox.grid(row=7, column=1)
             results_textbox = new_results_textbox
 
 
 # Add a button to trigger the action
 submit_button = ctk.CTkButton(root, text="Submit", command=on_submit)
-submit_button.pack(pady=10)
+submit_button.grid(row=6, column=1, sticky = 'W')
 
 
 # Function to open the file dialog
@@ -176,26 +178,45 @@ def select_file():
 
 # Create a button to trigger the file dialog
 file_button = ctk.CTkButton(root, text="Select a File", command=select_file)
-file_button.pack(pady=20)
+file_button.grid(row=4, column=1)
 
 
 # Label to display the selected file
 label = ctk.CTkLabel(root, text="No file selected")
-label.pack(pady=10)
-
+label.grid(row=5, column=1)
 
 
 # Callback function for when an option is selected
-def select_resume(choice):
+def select_resume(choice, resume_textbox):
     print(f"Selected Resume: {choice}")
 
-    save_slot_selection(choice)
+    # Clears text box inputs
+    resume_textbox.delete("0.0", "end")
+    
+    # Getting the absolute path of the current python script
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    
+    # now append the file name to the absolute path of the python script
+    file_path = os.path.join(current_directory , choice)
+
+    # read the resume file contents
+    resume_contents = read_text_file(choice)
+    resume_textbox.insert("0.0", resume_contents)
+  
+
 
 
 # Dropdown menu with options
-resume_choices = ["Resume 1", "Resume 2", "Resume 3"]
-dropdown = ctk.CTkOptionMenu(root, values=resume_choices, command=select_resume)
-dropdown.pack(pady=20)
+directory_path = '/home/fearfully_m/Desktop/ResumeAnalyzer/'
+
+# Dropdown menu with options and filter the files to only search for .pkl files
+resume_choices = [f for f in os.listdir(directory_path) 
+         if os.path.isfile(os.path.join(directory_path, f)) and f.endswith('.pkl')]
+dropdown = ctk.CTkOptionMenu(root, values=resume_choices, command = lambda choice: select_resume(choice,resume_textbox))
+dropdown.grid(row=6, column=1 ,sticky = 'E')
+
+
+
 
 # Run the main application loop
 root.mainloop()
