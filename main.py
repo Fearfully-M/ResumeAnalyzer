@@ -172,8 +172,20 @@ def select_file():
     )
     if file_path:  # If a file is selected
         print(f"Selected File: {file_path}")
-        label.configure(text=f"Selected: {file_path}")
-        save_slot_selection(file_path)
+        label.configure(text=f"Selected: {file_path}") 
+    try:
+        #load and save resume data
+        print("hello")
+        selected_resume_file = save_slot_selection(file_path)
+        print("world")
+        # Clears text box inputs and input the contents of the opened file
+        resume_textbox.delete("0.0", "end")
+        resume_textbox.insert("0.0", selected_resume_file)
+
+    # if an exception print to screen
+    except Exception as e:
+        print("exception")
+        print(f"Error: {e}")
 
 
 # Create a button to trigger the file dialog
@@ -186,7 +198,7 @@ label = ctk.CTkLabel(root, text="No file selected")
 label.grid(row=5, column=1)
 
 
-# Callback function for when an option is selected
+# Callback function for whe
 def select_resume(choice, resume_textbox):
     print(f"Selected Resume: {choice}")
 
@@ -202,8 +214,6 @@ def select_resume(choice, resume_textbox):
     # read the resume file contents
     resume_contents = read_text_file(choice)
     resume_textbox.insert("0.0", resume_contents)
-  
-
 
 
 # Dropdown menu with options
@@ -214,8 +224,6 @@ resume_choices = [f for f in os.listdir(directory_path)
          if os.path.isfile(os.path.join(directory_path, f)) and f.endswith('.pkl')]
 dropdown = ctk.CTkOptionMenu(root, values=resume_choices, command = lambda choice: select_resume(choice,resume_textbox))
 dropdown.grid(row=6, column=1 ,sticky = 'E')
-
-
 
 
 # Run the main application loop
