@@ -125,25 +125,19 @@ def on_submit():
 
         else:
             keywords = (', ').join(set(matched_keywords))
-            matched_keywords = "The matched keywords are: " + keywords + "\nThe keyword percentage match is: " + str(keyword_percentage) + "%"
+            matched_keywords = "The matched keywords are: " + keywords + "\nThe keyword percentage match is: " + str(keyword_percentage) + "%" + '\n'
 
         # if keyword ratio of keywords in job description are high 
         if keyword_percentage > 70:
-            s = f"""Your resume has a very high percentage of keywords\n (Keyword to word ratio: {keyword_percentage}%). This might suggest keyword stuffing and could be losing context.")
-                Use keywords more sparingly and with more context - for example:") Instead of saying: 'Experienced in Python' give context such as: 'Developed a Python-based automation tool that improved efficiency by 30%'")
-                Most resumes that are considered have a keyword to word ratio of 50-70%"""
+            s = f"""Your resume has a very high percentage of keywords\n (Keyword to word ratio: {keyword_percentage}%). This might suggest keyword stuffing and could be losing context.") Use keywords more sparingly and with more context - for example:") Instead of saying: 'Experienced in Python' give context such as: 'Developed a Python-based automation tool that improved efficiency by 30%'") Most resumes that are considered have a keyword to word ratio of 50-70% \n"""
 
         # if keyword ratio is low 
         elif keyword_percentage < 50:
-                s = f"""Your resume has a relatively low number of keywords used compared to the job description. (Keyword to word ratio: {keyword_percentage}%)
-                Make sure you are marketing your skills effectively. For example instead of saying:
-                Responsible for developing backend solutions' you might want to rephrase it as 'Developed backend soltuions using Python and Flask to optimize performance'
-                The former has fewer keywords and encapsulates the details of what was done whereas the later succintly describes but includes the actual tools used and what the tools used accomplished whilst leaving the reader wanting to know more."""
+                s = f"""Your resume has a relatively low number of keywords used compared to the job description. (Keyword to word ratio: {keyword_percentage}%) Make sure you are marketing your skills effectively. For example instead of saying: Responsible for developing backend solutions' you might want to rephrase it as 'Developed backend soltuions using Python and Flask to optimize performance' The former has fewer keywords and encapsulates the details of what was done whereas the later succintly describes but includes the actual tools used and what the tools used accomplished whilst leaving the reader wanting to know more. \n"""
         
         # if the keyword ratio is good - inbetween 50-70 percent
         else:
-            s = f"""The ratio of words to keywords used in your resume compared to the job description is excellent.
-                Keyword to word ratio: {keyword_percentage}%"""
+            s = f"""The ratio of words to keywords used in your resume compared to the job description is excellent. Keyword to word ratio: {keyword_percentage}% \n"""
 
         # determine if there is keyword stuffing
         keyword_stuffing = detect_keyword_stuffing(resume_text, job_keywords)
