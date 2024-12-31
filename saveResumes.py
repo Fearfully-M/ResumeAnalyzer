@@ -19,11 +19,6 @@ def load_resume_pickle(file_path):
     
     return resume_data
 
-# # Example usage
-# file_path = "resume.pkl"
-# save_resume_pickle(file_path, "This is a sample resume.")
-# print(load_resume_pickle(file_path))  # Output: This is a sample resume.
-
 # which save slot the user saves the resume to 1, 2, or 3
 def save_slot_selection(file_path):
 
@@ -58,6 +53,11 @@ def read_text_file(file_path):
         print(f"The file at {file_path} was not found.")
     except IOError:
         print(f"An error occurred while trying to read the file at {file_path}.")
+
+# # Example usage
+# file_path = "resume.pkl"
+# save_resume_pickle(file_path, "This is a sample resume.")
+# print(load_resume_pickle(file_path))  # Output: This is a sample resume.
 
 # used to get lines from text and save to a list
 # lines = []

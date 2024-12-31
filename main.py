@@ -18,21 +18,25 @@ root.grid_columnconfigure(0, weight=1)  # Blank column
 root.grid_columnconfigure(3, weight=1)  # Blank column
 
 
+
 # Define the function to handle shortcuts
 def handle_shortcuts(event):
-    textbox = event.widget # get widget that triggered the event
-    if isinstance(textbox, ctk.CTkTextbox):
-        if event.keysym == "a" and event.state & 0x4:  # Ctrl+A
-            textbox.tag_add("sel", "1.0", "end")  # Select all text
-            return "break"
-        elif event.keysym == "c" and event.state & 0x4:  # Ctrl+C
-            if textbox.tag_ranges("sel"):  # Check if text is selected
-                root.clipboard_clear()
-                root.clipboard_append(textbox.get("sel.first", "sel.last"))
-            return "break"
-        elif event.keysym == "v" and event.state & 0x4:  # Ctrl+V
+    textbox = event.widget  # Get the widget that triggered the event
+
+    if event.keysym == "a" and event.state & 0x4:  # Ctrl+A
+        event.widget.tag_add("sel", "1.0", "end")  # Select all text
+        return "break"
+    elif event.keysym == "c" and event.state & 0x4:  # Ctrl+C
+        if textbox.tag_ranges("sel"):  # Check if text is selected
+            root.clipboard_clear()
+            root.clipboard_append(textbox.get("sel.first", "sel.last"))
+        return "break"
+    elif event.keysym == "v" and event.state & 0x4:  # Ctrl+V
+        try:
             textbox.insert("insert", root.clipboard_get())
-            return "break"  
+        except Exception as e:
+            print(f"Clipboard error: {e}")
+        return "break" 
 
 
 # Create a label for the job description
@@ -61,6 +65,7 @@ for textbox in [jobDescription_textbox, resume_textbox]:
     textbox.bind("<Control-a>", handle_shortcuts)
     textbox.bind("<Control-c>", handle_shortcuts)
     textbox.bind("<Control-v>", handle_shortcuts)
+
 
 # Define a function to get input from the textbox
 def on_submit():
@@ -98,7 +103,7 @@ def on_submit():
         # Dynamically create a new textbox
         new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
         new_results_textbox.insert("0.0", error_message)
-        new_results_textbox.grid(row=7, column=1)
+        new_results_textbox.grid(row=8, column=2)
         results_textbox = new_results_textbox
 
     # calculate the resume keywords
@@ -151,19 +156,19 @@ def on_submit():
             # Dynamically create a new textbox
             new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
             new_results_textbox.insert("0.0", matched_keywords + "\n" + f"The following words might be overused in your resume. {stuffed_keywords}. Make sure to check to see if enough context is given for these keywords.\n" + s)
-            new_results_textbox.grid(row=7, column=1)
+            new_results_textbox.grid(row=8, column=2, sticky = "S")
             results_textbox = new_results_textbox
         
         else:
             # Dynamically create a new textbox
             new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
             new_results_textbox.insert("0.0", matched_keywords + "\n" + s)
-            new_results_textbox.grid(row=7, column=1)
+            new_results_textbox.grid(row=8, column=2, sticky = "S")
             results_textbox = new_results_textbox
 
 
 # Add a button to trigger the action
-submit_button = ctk.CTkButton(root, text="Submit", command=on_submit)
+submit_button = ctk.CTkButton(root, text = "Calculate", fg_color="#1f6aa5", text_color="white", hover_color = "red", command=on_submit)
 submit_button.grid(row=7, column=2, sticky = 'W')
 
 
@@ -178,21 +183,19 @@ def select_file():
         label.configure(text=f"Selected: {file_path}") 
     try:
         #load and save resume data
-        print("hello")
         selected_resume_file = save_slot_selection(file_path)
-        print("world")
+        
         # Clears text box inputs and input the contents of the opened file
         resume_textbox.delete("0.0", "end")
         resume_textbox.insert("0.0", selected_resume_file)
 
     # if an exception print to screen
     except Exception as e:
-        print("exception")
         print(f"Error: {e}")
 
 
 # Create a button to trigger the file dialog
-file_button = ctk.CTkButton(root, text="Select a File", command=select_file)
+file_button = ctk.CTkButton(root, text="Select a File", command=select_file, hover_color = "red")
 file_button.grid(row=7, column=2)
 
 
@@ -222,16 +225,18 @@ def select_resume(choice, resume_textbox):
 # Dropdown menu with options
 directory_path = '/home/fearfully_m/Desktop/ResumeAnalyzer/'
 
+# Create a StringVar to assign a default value for the dropdown menu
+selected_option = ctk.StringVar(value="Select a Resume")  # Default value
+
 # Dropdown menu with options and filter the files to only search for .pkl files
 resume_choices = [f for f in os.listdir(directory_path) 
          if os.path.isfile(os.path.join(directory_path, f)) and f.endswith('.pkl')]
-dropdown = ctk.CTkOptionMenu(root, values=resume_choices, command = lambda choice: select_resume(choice,resume_textbox))
+dropdown = ctk.CTkOptionMenu(root, variable = selected_option, values=resume_choices, command = lambda choice: select_resume(choice,resume_textbox))
 dropdown.grid(row=7, column=2 ,sticky = 'E')
 
 # Label to display the dropdown
 label_dropdown = ctk.CTkLabel(root, text="Saved Resumes")
 label_dropdown.grid(row=6, column=2, sticky= 'E')
-
 
 # Run the main application loop
 root.mainloop()
