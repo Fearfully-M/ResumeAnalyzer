@@ -11,6 +11,8 @@ file_path = '/home/user/Documents/Resume.txt'
 mock_resume_text = 'This is a sample resume text.'
 
 # Test for save_slot_selection function
+
+
 @patch('resume_analyzer.read_text_file')  # Mock the read_text_file function
 @patch('resume_analyzer.os.path.basename')  # Mock os.path.basename
 @patch('resume_analyzer.os.path.splitext')  # Mock os.path.splitext
@@ -18,10 +20,14 @@ mock_resume_text = 'This is a sample resume text.'
 @patch('resume_analyzer.load_resume_pickle')  # Mock load_resume_pickle
 def test_save_slot_selection(mock_load, mock_save, mock_split, mock_basename, mock_read):
     # Setup mock return values
-    mock_read.return_value = mock_resume_text  # Mock read_text_file to return the resume text
-    mock_basename.return_value = 'Resume.txt'  # Mock os.path.basename to return 'Resume.txt'
-    mock_split.return_value = ('Resume', '.txt')  # Mock os.path.splitext to split the filename
-    mock_load.return_value = mock_resume_text  # Mock load_resume_pickle to return the resume text
+    # Mock read_text_file to return the resume text
+    mock_read.return_value = mock_resume_text
+    # Mock os.path.basename to return 'Resume.txt'
+    mock_basename.return_value = 'Resume.txt'
+    # Mock os.path.splitext to split the filename
+    mock_split.return_value = ('Resume', '.txt')
+    # Mock load_resume_pickle to return the resume text
+    mock_load.return_value = mock_resume_text
 
     # Call the function with the test file path
     result = save_slot_selection(file_path)
@@ -45,7 +51,10 @@ def test_save_slot_selection(mock_load, mock_save, mock_split, mock_basename, mo
     assert result == mock_resume_text
 
 # Test for save_resume_pickle function
-@patch('resume_analyzer.open', new_callable=mock_open)  # Mock the open function
+
+
+# Mock the open function
+@patch('resume_analyzer.open', new_callable=mock_open)
 @patch('resume_analyzer.pickle.dump')  # Mock pickle.dump
 def test_save_resume_pickle(mock_pickle_dump, mock_open):
     file_path = 'Resume.pkl'
@@ -61,4 +70,5 @@ def test_save_resume_pickle(mock_pickle_dump, mock_open):
     mock_pickle_dump.assert_called_once_with(resume_text, mock_open())
 
     # You can also verify that the file is being opened correctly with the correct arguments:
-    mock_open().write.assert_called()  # This checks that the file write operation has been called
+    # This checks that the file write operation has been called
+    mock_open().write.assert_called()

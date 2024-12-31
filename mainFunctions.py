@@ -7,13 +7,17 @@ nltk.download("punkt")
 nltk.download("stopwords")
 nltk.download("punkt_tab")
 
+
 def extract_keywords(job_description):
     """Extracts keywords from a job description and removes 'stop words' that don't add value"""
-    stop_words = set(stopwords.words("english")) # Set the language to look for 'stop words' 
-    words = word_tokenize(job_description) # tokenize or split words up into individual elements in a list
+    stop_words = set(stopwords.words("english")
+                     )  # Set the language to look for 'stop words'
+    # tokenize or split words up into individual elements in a list
+    words = word_tokenize(job_description)
 
     # Get only the keywords in the description - according to NLTK
-    keywords = [word for word in words if word.isalnum() and word.lower() not in stop_words]
+    keywords = [word for word in words if word.isalnum() and word.lower()
+                not in stop_words]
     return keywords
 
 
@@ -24,13 +28,15 @@ def match_keywords(resume_text, job_keywords):
     resume_words = set(word_tokenize(resume_text.lower()))
 
     # find if there are any matches in the resume with the job keywords and set them to the matches list
-    matches = [keyword for keyword in job_keywords if keyword.lower() in resume_words]
+    matches = [keyword for keyword in job_keywords if keyword.lower()
+               in resume_words]
 
     # Return the keywords as well as a value of the percentage of words that matched the keywords
     return matches, round(len(matches) / len(job_keywords) * 100, 2)
 
 
 def detect_keyword_stuffing(resume_text, job_keywords):
-    excessive_repeats = {keyword: resume_text.lower().count(keyword.lower()) for keyword in job_keywords}
+    excessive_repeats = {keyword: resume_text.lower().count(
+        keyword.lower()) for keyword in job_keywords}
 
-    return {keyword: count for keyword, count in excessive_repeats.items() if count > 5} 
+    return {keyword: count for keyword, count in excessive_repeats.items() if count > 5}

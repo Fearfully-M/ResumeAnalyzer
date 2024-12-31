@@ -2,11 +2,15 @@ import pickle
 import os
 
 # Save resume to a file
+
+
 def save_resume_pickle(file_path, resume_text):
     with open(file_path, "wb") as file:
         pickle.dump(resume_text, file)
 
 # Load resume from a file
+
+
 def load_resume_pickle(file_path):
     with open(file_path, 'rb') as file:
         resume_data = pickle.load(file)
@@ -16,10 +20,12 @@ def load_resume_pickle(file_path):
     # Ensure the data is a string
     # if not isinstance(resume_data, str):
     #     raise ValueError("The content of the .pkl file must be a string.")
-    
+
     return resume_data
 
 # which save slot the user saves the resume to 1, 2, or 3
+
+
 def save_slot_selection(file_path):
 
     # read the file's content
@@ -52,7 +58,8 @@ def read_text_file(file_path):
     except FileNotFoundError:
         print(f"The file at {file_path} was not found.")
     except IOError:
-        print(f"An error occurred while trying to read the file at {file_path}.")
+        print(
+            f"An error occurred while trying to read the file at {file_path}.")
 
 # # Example usage
 # file_path = "resume.pkl"
