@@ -1,4 +1,6 @@
 # Resume Keyword Analyzer
+    #### Video Demo:  <URL HERE>
+    #### Description: A Python application that determines the ratio of keywords from a job description compared to a user's resume text file
 
 ## Overview
 

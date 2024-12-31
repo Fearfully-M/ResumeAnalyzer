@@ -4,21 +4,6 @@ from tkinter import filedialog
 import customtkinter as ctk
 import os
 
-# Set up the appearance (optional)
-ctk.set_appearance_mode("System")
-ctk.set_default_color_theme("blue")
-
-# Create the main window
-root = ctk.CTk()
-root.geometry("750x1080")
-root.title("Resume Keyword Analyzer")
-
-# Blank column so that widgets start in the second (or middle) column on the screen
-root.grid_columnconfigure(0, weight=1)  # Blank column
-root.grid_columnconfigure(3, weight=1)  # Blank column
-
-
-
 # Define the function to handle shortcuts
 def handle_shortcuts(event):
     textbox = event.widget  # Get the widget that triggered the event
@@ -37,35 +22,6 @@ def handle_shortcuts(event):
         except Exception as e:
             print(f"Clipboard error: {e}")
         return "break" 
-
-
-# Create a label for the job description
-job_label = ctk.CTkLabel(root, text="Input the Job Description Below:")
-job_label.grid(row=0, column=2 , sticky = 'NSEW')
-
-# Create the blank Textbox field with increased height to input job description
-jobDescription_textbox = ctk.CTkTextbox(root, height=300, width=500)
-jobDescription_textbox.insert("0.0", "Job Description Here...")
-jobDescription_textbox.grid(row=1, column=2 , sticky = 'E')
-
-# Create a label for the resume
-resume_label = ctk.CTkLabel(root, text="Input the Resume Below:")
-resume_label.grid(row=2, column=2 , sticky = 'NSEW')
-
-# Create the blank Textbox to input resume
-resume_textbox = ctk.CTkTextbox(root, height=300, width=500)
-resume_textbox.insert("0.0", "Resume Here...")
-resume_textbox.grid(row=3, column=2 , sticky = 'E')
-
-# Initialize a textbox reference before it is initially made
-results_textbox = None
-
-# Bind the shortcuts to both textboxes
-for textbox in [jobDescription_textbox, resume_textbox]:
-    textbox.bind("<Control-a>", handle_shortcuts)
-    textbox.bind("<Control-c>", handle_shortcuts)
-    textbox.bind("<Control-v>", handle_shortcuts)
-
 
 # Define a function to get input from the textbox
 def on_submit():
@@ -103,7 +59,7 @@ def on_submit():
         # Dynamically create a new textbox
         new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
         new_results_textbox.insert("0.0", error_message)
-        new_results_textbox.grid(row=8, column=2)
+        new_results_textbox.grid(row=9, column=2)
         results_textbox = new_results_textbox
 
     # calculate the resume keywords
@@ -150,21 +106,33 @@ def on_submit():
             # Dynamically create a new textbox
             new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
             new_results_textbox.insert("0.0", matched_keywords + "\n" + f"The following words might be overused in your resume. {stuffed_keywords}. Make sure to check to see if enough context is given for these keywords.\n" + s)
-            new_results_textbox.grid(row=8, column=2, sticky = "S")
+            new_results_textbox.grid(row=9, column=2, sticky = "S")
             results_textbox = new_results_textbox
         
         else:
             # Dynamically create a new textbox
             new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
             new_results_textbox.insert("0.0", matched_keywords + "\n" + s)
-            new_results_textbox.grid(row=8, column=2, sticky = "S")
+            new_results_textbox.grid(row=9, column=2, sticky = "S")
             results_textbox = new_results_textbox
 
+def job_description_keywords():
+    # get job description
+    job_description = jobDescription_textbox.get("0.0", "end-1c")
 
-# Add a button to trigger the action
-submit_button = ctk.CTkButton(root, text = "Calculate", fg_color="#1f6aa5", text_color="white", hover_color = "red", command=on_submit)
-submit_button.grid(row=7, column=2, sticky = 'W')
+    # collect keywords from job description
+    job_keywords = extract_keywords(job_description)
 
+    if not job_keywords:
+        job_keywords = "There are no keywords."
+
+    if job_keywords[0] == 'Job' and job_keywords[1] == 'Description':
+        job_keywords = "Enter in a job description."
+
+    new_results_textbox = ctk.CTkTextbox(root, height=300, width=500)
+    new_results_textbox.insert("0.0", job_keywords)
+    new_results_textbox.grid(row=9, column=2, sticky = "S")
+    results_textbox = new_results_textbox
 
 # Function to open the file dialog
 def select_file():
@@ -187,17 +155,6 @@ def select_file():
     except Exception as e:
         print(f"Error: {e}")
 
-
-# Create a button to trigger the file dialog
-file_button = ctk.CTkButton(root, text="Select a File", command=select_file, hover_color = "red")
-file_button.grid(row=7, column=2)
-
-
-# Label to display the selected file
-label = ctk.CTkLabel(root, text="No file selected")
-label.grid(row=6, column=2)
-
-
 # Callback function for whe
 def select_resume(choice, resume_textbox):
     print(f"Selected Resume: {choice}")
@@ -214,6 +171,64 @@ def select_resume(choice, resume_textbox):
     # read the resume file contents
     resume_contents = load_resume_pickle(choice)
     resume_textbox.insert("0.0", resume_contents)
+
+# Set up the appearance (optional)
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("blue")
+
+# Create the main window
+root = ctk.CTk()
+root.geometry("750x1080")
+root.title("Resume Keyword Analyzer")
+
+# Blank column so that widgets start in the second (or middle) column on the screen
+root.grid_columnconfigure(0, weight=1)  # Blank column
+root.grid_columnconfigure(3, weight=1)  # Blank column
+
+# Create a label for the job description
+job_label = ctk.CTkLabel(root, text="Input the Job Description Below:")
+job_label.grid(row=0, column=2 , sticky = 'NSEW')
+
+# Create the blank Textbox field with increased height to input job description
+jobDescription_textbox = ctk.CTkTextbox(root, height=300, width=500)
+jobDescription_textbox.insert("0.0", "Job Description Here...")
+jobDescription_textbox.grid(row=1, column=2 , sticky = 'E')
+
+# Create a label for the resume
+resume_label = ctk.CTkLabel(root, text="Input the Resume Below:")
+resume_label.grid(row=2, column=2 , sticky = 'NSEW')
+
+# Create the blank Textbox to input resume
+resume_textbox = ctk.CTkTextbox(root, height=300, width=500)
+resume_textbox.insert("0.0", "Resume Here...")
+resume_textbox.grid(row=3, column=2 , sticky = 'E')
+
+# Initialize a textbox reference before it is initially made
+results_textbox = None
+
+# Bind the shortcuts to both textboxes
+for textbox in [jobDescription_textbox, resume_textbox]:
+    textbox.bind("<Control-a>", handle_shortcuts)
+    textbox.bind("<Control-c>", handle_shortcuts)
+    textbox.bind("<Control-v>", handle_shortcuts)
+
+# Add a button to trigger the action
+submit_button = ctk.CTkButton(root, text = "Calculate", fg_color="#1f6aa5", text_color="white", hover_color = "red", command=on_submit)
+submit_button.grid(row=7, column=2, sticky = 'W')
+
+# Add a button to trigger the action
+determine_keywords = ctk.CTkButton(root, text = "Job Description Keywords", fg_color="#1f6aa5", text_color="white", hover_color = "red", command=job_description_keywords)
+determine_keywords.grid(row=8, column=2, sticky = 'S', pady=10)
+
+
+
+# Create a button to trigger the file dialog
+file_button = ctk.CTkButton(root, text="Select a File", command=select_file, hover_color = "red")
+file_button.grid(row=7, column=2)
+
+# Label to display the selected file
+label = ctk.CTkLabel(root, text="No file selected")
+label.grid(row=6, column=2)
 
 
 # Dropdown menu with options
@@ -234,6 +249,3 @@ label_dropdown.grid(row=6, column=2, sticky= 'E')
 
 # Run the main application loop
 root.mainloop()
-
-if __name__ == "__main__":
-    main()
