@@ -24,8 +24,6 @@ The goal of this project was to enhance familiarity with Python and explore a co
 1. Clone the repository:
     
     ```bash
-    bash
-    Copy code
     git clone https://github.com/Fearfully-M/ResumeAnalyzer.git
     
     ```
@@ -33,12 +31,9 @@ The goal of this project was to enhance familiarity with Python and explore a co
 2. Install the required dependencies:
     
     ```bash
-    bash
-    Copy code
     pip install -r requirements.txt
     
     ```
-    
 
 ---
 
@@ -48,10 +43,7 @@ The goal of this project was to enhance familiarity with Python and explore a co
 2. Run the application:
     
     ```bash
-    bash
-    Copy code
     py main.py
-    
     ```
     
 3. Once the program launches:
