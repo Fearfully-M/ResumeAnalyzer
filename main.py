@@ -234,3 +234,6 @@ label_dropdown.grid(row=6, column=2, sticky= 'E')
 
 # Run the main application loop
 root.mainloop()
+
+if __name__ == "__main__":
+    main()
