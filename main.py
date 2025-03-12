@@ -4,9 +4,10 @@ from tkinter import filedialog
 import customtkinter as ctk
 import os
 
+# used so that the relative path is found for 'ResumeAnalyzer' on any user's machine
+from pathlib import Path
+
 # Define the function to handle shortcuts
-
-
 def handle_shortcuts(event):
     textbox = event.widget  # Get the widget that triggered the event
 
@@ -26,8 +27,6 @@ def handle_shortcuts(event):
         return "break"
 
 # Define a function to get input from the textbox
-
-
 def on_submit():
     global results_textbox
 
@@ -146,8 +145,6 @@ def job_description_keywords():
     results_textbox = new_results_textbox
 
 # Function to open the file dialog
-
-
 def select_file():
     file_path = filedialog.askopenfilename(
         title="Select a File",
@@ -170,8 +167,6 @@ def select_file():
         print(f"Error: {e}")
 
 # Callback function for whe
-
-
 def select_resume(choice, resume_textbox):
     print(f"Selected Resume: {choice}")
 
@@ -190,7 +185,7 @@ def select_resume(choice, resume_textbox):
 
 
 # Set up the appearance (optional)
-ctk.set_appearance_mode("System")
+ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
 # Create the main window
@@ -248,8 +243,16 @@ file_button.grid(row=7, column=2)
 label = ctk.CTkLabel(root, text="No file selected")
 label.grid(row=6, column=2)
 
-# Dropdown menu with options
-directory_path = '/home/fearfully_m/Desktop/ResumeAnalyzer/'
+
+# Get the absolute path of the script's directory
+script_dir = Path(__file__).resolve().parent
+
+# Find 'ResumeAnalyzer' directory by looking for it in the path hierarchy
+while script_dir.name != 'ResumeAnalyzer' and script_dir != script_dir.parent:
+    script_dir = script_dir.parent
+
+# Set the directory path to the absolute path of the file location plus the parent directory 'ResumeAnalyzer'
+directory_path = script_dir
 
 # Create a StringVar to assign a default value for the dropdown menu
 selected_option = ctk.StringVar(value="Select a Resume")  # Default value
